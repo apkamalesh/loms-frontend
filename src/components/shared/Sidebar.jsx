@@ -1,63 +1,64 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { BookOpen, LogOut, X } from 'lucide-react';
+import { BookOpen, LogOut } from 'lucide-react';
 
-export default function Sidebar({ links, isOpen, setIsOpen }) {
+export default function Sidebar({ links, isOpen, onClose }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+    if (onClose) onClose();
+  };
+
+  const handleLinkClick = () => {
+    if (onClose) onClose();
+  };
+
   return (
-    <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px 24px', borderBottom: '1px solid #1e1e1e', marginBottom: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ width: 38, height: 38, background: '#10b981', borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <BookOpen size={20} color="#0a0a0a" />
-            </div>
-            <div>
-            <div style={{ fontSize: 17, fontWeight: 700 }}>LOMS</div>
-            <div style={{ fontSize: 11, color: '#71717a' }}>Learning Outcomes</div>
-            </div>
-        </div>
-        <button className="mobile-close" onClick={() => setIsOpen(false)}>
-            <X size={20} />
-        </button>
-      </div>
+    <>
+      {/* Dark overlay on mobile */}
+      <div className={`sidebar-overlay ${isOpen ? 'open' : ''}`} onClick={onClose} />
 
-      <nav style={{ flex: 1, padding: '0 10px', display: 'flex', flexDirection: 'column', gap: 2 }}>
-        {links.map(({ to, icon: Icon, label, badge }) => (
-          <NavLink 
-            key={to} 
-            to={to} 
-            onClick={() => setIsOpen(false)} // Close menu when clicking a link on mobile
-            style={({ isActive }) => ({
-                display: 'flex', alignItems: 'center', gap: 10,
-                padding: '10px 14px', borderRadius: 8, fontSize: 14, fontWeight: 500,
-                textDecoration: 'none', transition: 'all 0.15s',
-                background: isActive ? '#1e1e1e' : 'transparent',
-                color: isActive ? '#fff' : '#a1a1aa',
-          })}>
-            <Icon size={18} />
-            <span style={{ flex: 1 }}>{label}</span>
-            {badge > 0 && (
-              <span style={{ background: '#f59e0b', color: '#0a0a0a', borderRadius: 10, fontSize: 11, fontWeight: 700, padding: '1px 7px' }}>
-                {badge}
-              </span>
-            )}
-          </NavLink>
-        ))}
-      </nav>
-
-      <div style={{ borderTop: '1px solid #1e1e1e', padding: '16px 20px 0', marginTop: 12 }}>
-        <div style={{ marginBottom: 12 }}>
-          <div style={{ fontSize: 14, fontWeight: 600 }}>{user?.name}</div>
-          <div style={{ fontSize: 12, color: '#71717a' }}>{user?.role?.charAt(0) + user?.role?.slice(1).toLowerCase()}</div>
+      <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+        <div className="sidebar-logo">
+          <div className="sidebar-logo-icon">
+            <BookOpen size={18} color="#0a0a0a" />
+          </div>
+          <div>
+            <div className="sidebar-logo-title">LOMS</div>
+            <div className="sidebar-logo-sub">Learning Outcomes</div>
+          </div>
         </div>
-        <button onClick={() => { logout(); navigate('/login'); }}
-          style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', color: '#71717a', fontSize: 14, cursor: 'pointer', padding: '6px 0' }}>
-          <LogOut size={16} /><span>Sign Out</span>
-        </button>
-      </div>
-    </aside>
+
+        <nav className="sidebar-nav">
+          {links.map(({ to, icon: Icon, label, badge }) => (
+            <NavLink
+              key={to}
+              to={to}
+              onClick={handleLinkClick}
+              className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
+            >
+              <Icon size={17} />
+              <span style={{ flex: 1 }}>{label}</span>
+              {badge > 0 && <span className="sidebar-badge">{badge}</span>}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="sidebar-footer">
+          <div className="sidebar-user-name">{user?.name}</div>
+          <div className="sidebar-user-role">
+            {user?.role ? user.role.charAt(0) + user.role.slice(1).toLowerCase() : ''}
+          </div>
+          <button className="sidebar-logout" onClick={handleLogout}>
+            <LogOut size={15} />
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </aside>
+    </>
   );
 }
