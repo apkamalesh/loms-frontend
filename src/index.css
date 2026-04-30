@@ -1,160 +1,165 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* 1. ADVANCED RESET */
+/* 1. RESET & VARIABLES */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-    --bg: #0a0a0a; --bg2: #111; --card: #161616; --hover: #1c1c1c;
-    --border: #262626; --border2: #333;
-    --text: #fff; --text2: #a1a1aa; --muted: #525252;
-    --accent: #10b981; --accent-h: #059669;
-    --danger: #ef4444; --r: 12px; --r2: 8px; --t: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --bg: #0a0a0a; --bg2: #111; --card: #1a1a1a; --hover: #222;
+  --border: #2a2a2a; --border2: #333;
+  --text: #fff; --text2: #a1a1aa; --muted: #71717a;
+  --accent: #10b981; --accent-h: #059669; --accent-l: rgba(16,185,129,.12);
+  --danger: #ef4444; --danger-l: rgba(239,68,68,.12);
+  --warn: #f59e0b; --warn-l: rgba(245,158,11,.12);
+  --r: 10px; --r2: 6px; --t: .2s ease;
 }
 
 body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.5;
-    overflow-x: hidden; /* Prevents messy horizontal scrolling */
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden; /* Prevents messy side-scrolling */
 }
 
-/* 2. PC LAYOUT (Side-by-Side) */
+/* 2. CORE LAYOUT */
 .layout {
-    display: flex;
-    min-height: 100vh;
-    width: 100%;
-}
-
-.sidebar {
-    width: 280px;
-    background: var(--bg2);
-    border-right: 1px solid var(--border);
-    height: 100vh;
-    position: sticky;
-    top: 0;
-    flex-shrink: 0;
-    z-index: 100;
-    transition: transform var(--t);
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
 }
 
 .main-content {
-    flex: 1;
-    min-width: 0; /* Critical for grid stability */
-    display: flex;
-    flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  min-width: 0; /* Important for grid stability */
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
 }
 
 .page {
-    padding: 40px;
-    width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
+  padding: 32px;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
 }
 
-/* 3. LOGIN PAGE ALIGNMENT (Fix for image_0ea897.png) */
-.auth-page {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
+/* 3. SIDEBAR (PC & Slide-in Logic) */
+.sidebar {
+  width: 260px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
 }
 
-.auth-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 1000px;
-    gap: 40px;
+/* Mobile Toggle Buttons */
+.mobile-toggle {
+  display: none; /* Hidden on Desktop */
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: white;
+  padding: 8px;
+  border-radius: 8px;
+  margin: 20px 20px 0;
+  cursor: pointer;
+  width: fit-content;
 }
 
-.auth-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 40px;
-    width: 100%;
-    max-width: 480px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+.mobile-close {
+  display: none; /* Hidden on Desktop */
 }
 
-/* Form Styling */
-.form-group { margin-bottom: 20px; }
-.form-input {
-    width: 100%;
-    background: #000;
-    border: 1px solid var(--border2);
-    border-radius: var(--r2);
-    color: #fff;
-    padding: 12px 16px;
-    margin-top: 6px;
-    transition: border-color 0.2s;
-}
-.form-input:focus { border-color: var(--accent); }
-
-/* 4. DASHBOARD GRID (Fix for image_1bbd15.png) */
+/* 4. DASHBOARD COMPONENTS */
 .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 24px;
-    margin-bottom: 32px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
 }
 
 .stat-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 28px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 24px;
 }
 
-.stat-value { font-size: 38px; font-weight: 700; margin-top: 10px; }
+.stat-value { font-size: 36px; font-weight: 700; margin-top: 8px; }
+.stat-value.green { color: var(--accent); }
 
-/* 5. MOBILE OVERRIDES (Slide-to-Left Menu) */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* 5. UI ELEMENTS */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 20px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; border-radius: var(--r2); font-size: 14px; font-weight: 500; border: none; transition: all var(--t); }
+.btn-primary { background: var(--accent); color: #fff; }
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--r); }
+table { width: 100%; border-collapse: collapse; min-width: 600px; }
+th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+
+/* 6. AUTH PAGES (Login Alignment) */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.auth-card {
+  background: #161616;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 36px 40px;
+  width: 100%;
+  max-width: 480px;
+}
+
+/* 7. MOBILE BREAKPOINTS (The Slide Fix) */
 @media (max-width: 900px) {
-    /* Login Page becomes vertical */
-    .auth-container {
-        flex-direction: column;
-        text-align: center;
-        justify-content: center;
-    }
+  .mobile-toggle { display: flex; } /* Show Hamburger on Mobile */
+  
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    transform: translateX(-100%); /* Slide it off-screen to the left */
+  }
 
-    /* THE SLIDE FIX: Sidebar moves off-screen */
-    .sidebar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        transform: translateX(-100%); /* Hidden by default */
-        width: 280px;
-        box-shadow: 20px 0 50px rgba(0,0,0,0.8);
-    }
+  /* When JS adds the .open class */
+  .sidebar.open {
+    transform: translateX(0); /* Slide in */
+    box-shadow: 10px 0 50px rgba(0,0,0,0.8);
+  }
 
-    /* When sidebar has 'active' class (add this via JS/State) */
-    .sidebar.active {
-        transform: translateX(0);
-    }
+  .mobile-close {
+    display: block;
+    background: transparent;
+    border: none;
+    color: var(--text2);
+  }
 
-    .main-content {
-        width: 100vw;
-    }
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 999;
+  }
 
-    .page {
-        padding: 24px 16px;
-    }
-
-    /* Stack everything on mobile */
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .two-col {
-        grid-template-columns: 1fr;
-    }
-
-    /* Fix table scrolling */
-    .table-wrap {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
+  .page { padding: 16px; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
 }

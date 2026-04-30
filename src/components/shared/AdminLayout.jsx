@@ -3,12 +3,13 @@ import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import {
   LayoutDashboard, Building2, BookOpen, GraduationCap,
-  Users, UserCheck, Activity, ClipboardList, PenLine, BarChart2
+  Users, UserCheck, Activity, ClipboardList, PenLine, BarChart2, Menu
 } from 'lucide-react';
 import { getPendingUsers } from '../../services/api';
 
 export function AdminLayout() {
   const [pendingCount, setPendingCount] = useState(0);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     getPendingUsers()
@@ -17,24 +18,31 @@ export function AdminLayout() {
   }, []);
 
   const links = [
-    { to: '/admin/dashboard',        icon: LayoutDashboard, label: 'Dashboard' },
+    { to: '/admin/dashboard',         icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/admin/departments',       icon: Building2,       label: 'Departments' },
-    { to: '/admin/subjects',          icon: BookOpen,        label: 'Subjects' },
+    { to: '/admin/subjects',           icon: BookOpen,        label: 'Subjects' },
     { to: '/admin/learning-outcomes', icon: GraduationCap,   label: 'Learning Outcomes' },
-    { to: '/admin/users',             icon: Users,           label: 'Users' },
-    { to: '/admin/pending-users',     icon: UserCheck,       label: 'Pending Approvals', badge: pendingCount },
-    { to: '/admin/login-logs',        icon: Activity,        label: 'Visitor Logs' },
+    { to: '/admin/users',              icon: Users,           label: 'Users' },
+    { to: '/admin/pending-users',      icon: UserCheck,       label: 'Pending Approvals', badge: pendingCount },
+    { to: '/admin/login-logs',         icon: Activity,        label: 'Visitor Logs' },
   ];
 
   return (
     <div className="layout">
-      <Sidebar links={links} />
-      <main className="main-content"><Outlet /></main>
+      <Sidebar links={links} isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
+      <main className="main-content">
+        <button className="mobile-toggle" onClick={() => setIsOpen(true)}>
+          <Menu size={24} />
+        </button>
+        <Outlet />
+      </main>
+      {isMenuOpen && <div className="sidebar-overlay" onClick={() => setIsOpen(false)} />}
     </div>
   );
 }
 
 export function TeacherLayout() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const links = [
     { to: '/teacher/dashboard',     icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/teacher/tests',         icon: ClipboardList,   label: 'Tests' },
@@ -43,21 +51,34 @@ export function TeacherLayout() {
   ];
   return (
     <div className="layout">
-      <Sidebar links={links} />
-      <main className="main-content"><Outlet /></main>
+      <Sidebar links={links} isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
+      <main className="main-content">
+        <button className="mobile-toggle" onClick={() => setIsOpen(true)}>
+          <Menu size={24} />
+        </button>
+        <Outlet />
+      </main>
+      {isMenuOpen && <div className="sidebar-overlay" onClick={() => setIsOpen(false)} />}
     </div>
   );
 }
 
 export function StudentLayout() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const links = [
     { to: '/student/dashboard',  icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/student/my-results', icon: ClipboardList,   label: 'My Results' },
   ];
   return (
     <div className="layout">
-      <Sidebar links={links} />
-      <main className="main-content"><Outlet /></main>
+      <Sidebar links={links} isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
+      <main className="main-content">
+        <button className="mobile-toggle" onClick={() => setIsOpen(true)}>
+          <Menu size={24} />
+        </button>
+        <Outlet />
+      </main>
+      {isMenuOpen && <div className="sidebar-overlay" onClick={() => setIsOpen(false)} />}
     </div>
   );
 }
